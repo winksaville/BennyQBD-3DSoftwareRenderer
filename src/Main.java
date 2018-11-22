@@ -40,6 +40,10 @@ public class Main
 	// depending on what you're doing
 	public static void main(String[] args) throws IOException
 	{
+		if (Dbg.D) { Dbg.pl(String.format("Yo dude: %s", "hi")); }
+
+		Dbg.testApproxEql();
+
 		Display display = new Display(800, 600, "Software Rendering");
 		RenderContext target = display.GetFrameBuffer();
 
