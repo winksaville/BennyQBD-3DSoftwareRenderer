@@ -2,7 +2,7 @@ import java.lang.Math;
 
 public class Dbg
 {
-	public static boolean D = true;
+	public static boolean D = false;
 
 	public static void p(String s) {
 		System.out.print(s);
