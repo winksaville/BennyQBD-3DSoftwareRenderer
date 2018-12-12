@@ -88,9 +88,9 @@ public class Gradients
 		m_depth[2] = maxYVert.GetPosition().GetZ();
 
 		Vector4f lightDir = new Vector4f(0,0,1);
-		m_lightAmt[0] = Saturate(minYVert.GetNormal().Dot(lightDir)) * 0.9f + 0.1f;
-		m_lightAmt[1] = Saturate(midYVert.GetNormal().Dot(lightDir)) * 0.9f + 0.1f;
-		m_lightAmt[2] = Saturate(maxYVert.GetNormal().Dot(lightDir)) * 0.9f + 0.1f;
+		m_lightAmt[0] = Saturate(minYVert.GetNormal().Dot(lightDir)) * 0.9f + 0.3f;
+		m_lightAmt[1] = Saturate(midYVert.GetNormal().Dot(lightDir)) * 0.9f + 0.3f;
+		m_lightAmt[2] = Saturate(maxYVert.GetNormal().Dot(lightDir)) * 0.9f + 0.3f;
 
 		// Note that the W component is the perspective Z value;
 		// The Z component is the occlusion Z value
