@@ -38,22 +38,25 @@ public class Camera
 
 		// Similarly, input keys are hardcoded here.
 		// As before, in a more general system, you might want to have these as variables.
-		if(input.GetKey(KeyEvent.VK_W))
+
+		// Translate/Move the camera
+		if(input.GetKey(KeyEvent.VK_E)) // Forward
 			Move(GetTransform().GetRot().GetForward(), movAmt);
-		if(input.GetKey(KeyEvent.VK_S))
+		if(input.GetKey(KeyEvent.VK_D)) // Backward
 			Move(GetTransform().GetRot().GetForward(), -movAmt);
-		if(input.GetKey(KeyEvent.VK_A))
+		if(input.GetKey(KeyEvent.VK_S)) // Left
 			Move(GetTransform().GetRot().GetLeft(), movAmt);
-		if(input.GetKey(KeyEvent.VK_D))
+		if(input.GetKey(KeyEvent.VK_F)) // Right
 			Move(GetTransform().GetRot().GetRight(), movAmt);
 		
-		if(input.GetKey(KeyEvent.VK_RIGHT))
+		// Rotate camera
+		if(input.GetKey(KeyEvent.VK_L)) // Right
 			Rotate(Y_AXIS, sensitivityX);
-		if(input.GetKey(KeyEvent.VK_LEFT))
+		if(input.GetKey(KeyEvent.VK_J)) // Left
 			Rotate(Y_AXIS, -sensitivityX);
-		if(input.GetKey(KeyEvent.VK_DOWN))
+		if(input.GetKey(KeyEvent.VK_K)) // Down
 			Rotate(GetTransform().GetRot().GetRight(), sensitivityY);
-		if(input.GetKey(KeyEvent.VK_UP))
+		if(input.GetKey(KeyEvent.VK_I)) // Up
 			Rotate(GetTransform().GetRot().GetRight(), -sensitivityY);
 	}
 
