@@ -28,6 +28,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 */
 
 import java.io.IOException;
+import java.awt.event.KeyEvent;
 
 /**
  * The sole purpose of this class is to hold the main method.
@@ -67,7 +68,11 @@ public class Main
 			float delta = (float)((currentTime - previousTime)/1000000000.0);
 			previousTime = currentTime;
 
-			camera.Update(display.GetInput(), delta);
+			Input input = display.GetInput();
+			if(input.GetKey(KeyEvent.VK_ESCAPE)) {
+				System.exit(0);
+			}
+			camera.Update(input, delta);
 			Matrix4f vp = camera.GetViewProjection();
 
 			monkeyTransform = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,1,0), delta));
