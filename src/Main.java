@@ -72,6 +72,18 @@ public class Main
 			if(input.GetKey(KeyEvent.VK_ESCAPE)) {
 				System.exit(0);
 			}
+			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_CONTROL)) {
+				System.out.printf("VK_RIGHT VK_CONTROL+location=%d\n", input.GetKeyLocation(KeyEvent.VK_CONTROL));
+			}
+			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_SHIFT)) {
+				System.out.printf("VK_RIGHT VK_SHIFT+location=%d\n", input.GetKeyLocation(KeyEvent.VK_SHIFT));
+			}
+			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_CONTROL)) {
+				System.out.printf("VK_LEFT VK_CONTROL+location=%d\n", input.GetKeyLocation(KeyEvent.VK_CONTROL));
+			}
+			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_SHIFT)) {
+				System.out.printf("VK_LEFT VK_SHIFT+location=%d\n", input.GetKeyLocation(KeyEvent.VK_SHIFT));
+			}
 			camera.Update(input, delta);
 			Matrix4f vp = camera.GetViewProjection();
 

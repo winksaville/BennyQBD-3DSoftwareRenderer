@@ -38,10 +38,20 @@ import java.awt.event.MouseMotionListener;
  */
 public class Input implements KeyListener, FocusListener,
 		MouseListener, MouseMotionListener {
-	private boolean[] keys = new boolean[65536];
+	private class KeyInfo {
+		boolean pressed = false;
+		int location = KeyEvent.KEY_LOCATION_UNKNOWN;
+	};
+	private KeyInfo[] keys = new KeyInfo[65536];
 	private boolean[] mouseButtons = new boolean[4];
 	private int mouseX = 0;
 	private int mouseY = 0;
+
+	public Input() {
+		for (int i = 0; i < keys.length; i++) {
+			keys[i] = new KeyInfo();
+		}
+	}
 
 	/** Updates state when the mouse is dragged */
 	public void mouseDragged(MouseEvent e) {
@@ -87,8 +97,10 @@ public class Input implements KeyListener, FocusListener,
 
 	/** Updates state when the window loses focus */
 	public void focusLost(FocusEvent e) {
-		for (int i = 0; i < keys.length; i++)
-			keys[i] = false;
+		for (int i = 0; i < keys.length; i++) {
+			keys[i].pressed = false;
+			keys[i].location = KeyEvent.KEY_LOCATION_UNKNOWN;
+		}
 		for (int i = 0; i < mouseButtons.length; i++)
 			mouseButtons[i] = false;
 	}
@@ -96,15 +108,19 @@ public class Input implements KeyListener, FocusListener,
 	/** Updates state when a key is pressed */
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
-		if (code > 0 && code < keys.length)
-			keys[code] = true;
+		if (code > 0 && code < keys.length) {
+			keys[code].pressed = true;
+			keys[code].location = e.getKeyLocation();
+		}
 	}
 
 	/** Updates state when a key is released */
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();
-		if (code > 0 && code < keys.length)
-			keys[code] = false;
+		if (code > 0 && code < keys.length) {
+			keys[code].pressed = false;
+			keys[code].location = KeyEvent.KEY_LOCATION_UNKNOWN;
+		}
 	}
 
 	/** Updates state when a key is typed */
@@ -118,7 +134,20 @@ public class Input implements KeyListener, FocusListener,
 	 * @return Whether or not key is currently pressed.
 	 */
 	public boolean GetKey(int key) {
-		return keys[key];
+		return keys[key].pressed;
+	}
+
+	/**
+	 * Gets the keys location if pressed. If not pressed returns KeyEvent.KEY_LOCATION_UNKNOWN
+	 *
+	 * @param key The key to test
+	 * @return KeyEvent.KEY_LOCATION_{LEFT|NUMPAD|RIGHT|STANDARD|UNKNOWN}
+	 */
+	public int GetKeyLocation(int key) {
+		if (GetKey(key))
+			return keys[key].location;
+		else
+			return KeyEvent.KEY_LOCATION_UNKNOWN;
 	}
 
 	/**
