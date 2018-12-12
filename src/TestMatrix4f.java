@@ -72,8 +72,10 @@ public class TestMatrix4f
 			{ 0, 0, 1, 0 },
 			{ 0, 0, 0, 1 }
 		});
-		approxEql(m, o, 7);
-		eql(m, o);
+
+		// Assert eql and approxEql
+		assert eql(m, o);
+		assert approxEql(m, o, 7);
 	}
 
 	static void matrix_4x4_mul_4x4()
@@ -89,10 +91,10 @@ public class TestMatrix4f
 
 		Matrix4f m2 = new Matrix4f();
 		m2.SetM(new float [][]{
-			{ 1, 2, 3, 4 },
-			{ 5, 6, 7, 8 },
-			{ 9, 10, 11, 12 },
 			{ 13, 14, 15, 16 },
+			{ 9, 10, 11, 12 },
+			{ 5, 6, 7, 8 },
+			{ 1, 2, 3, 4 },
 		});
 		if (DBG) pM44f("matrix.4x4*4x4: m2\n", m2);
 
