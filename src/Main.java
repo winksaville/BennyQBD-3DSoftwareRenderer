@@ -45,6 +45,7 @@ public class Main
 
 		Dbg.testApproxEql();
 		TestMatrix4f.test();
+		TestVector4f.test();
 
 		Display display = new Display(800, 600, "Software Rendering");
 		RenderContext target = display.GetFrameBuffer();
