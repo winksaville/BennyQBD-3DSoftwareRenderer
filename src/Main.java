@@ -58,8 +58,10 @@ public class Main
 		Mesh terrainMesh = new Mesh("./res/terrain2.obj");
 		Transform terrainTransform = new Transform(new Vector4f(0,-1.0f,0.0f));
 
-		Camera camera = new Camera(new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
-					   	(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f));
+		Matrix4f viewPerspective =
+			new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
+				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
+		Camera camera = new Camera(viewPerspective);
 		
 		float rotCounter = 0.0f;
 		long previousTime = System.nanoTime();
@@ -85,8 +87,11 @@ public class Main
 			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_SHIFT)) {
 				System.out.printf("VK_LEFT VK_SHIFT+location=%d\n", input.GetKeyLocation(KeyEvent.VK_SHIFT));
 			}
+
+			Matrix4f vp;
 			camera.Update(input, delta);
-			Matrix4f vp = camera.GetViewProjection();
+			//vp = camera.GetViewProjection(); // Dynamic viewPerspective
+			vp = viewPerspective; // Static viewPerspective
 
 			monkeyTransform = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,1,0), delta));
 
