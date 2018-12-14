@@ -37,6 +37,8 @@ import java.awt.event.KeyEvent;
  */
 public class Main
 {
+	static boolean DBG = true;
+
 	// Lazy exception handling here. You can do something more interesting 
 	// depending on what you're doing
 	public static void main(String[] args) throws IOException
@@ -61,8 +63,14 @@ public class Main
 		Matrix4f viewPerspective =
 			new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
 				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
+		if (DBG) Dbg.prtM4f("viewPerspective=", viewPerspective);
 		Camera camera = new Camera(viewPerspective);
 		
+		if (DBG) Dbg.prtM4f("monkeyTransform=", monkeyTransform.GetTransformation());
+
+		Matrix4f mvp = viewPerspective.Mul(monkeyTransform.GetTransformation());
+		if (DBG) Dbg.prtM4f("mvp=", mvp);
+
 		float rotCounter = 0.0f;
 		long previousTime = System.nanoTime();
 		while(true)
@@ -90,8 +98,8 @@ public class Main
 
 			Matrix4f vp;
 			camera.Update(input, delta);
-			//vp = camera.GetViewProjection(); // Dynamic viewPerspective
-			vp = viewPerspective; // Static viewPerspective
+			vp = camera.GetViewProjection(); // Dynamic viewPerspective
+			//vp = viewPerspective; // Static viewPerspective
 
 			monkeyTransform = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,1,0), delta));
 
