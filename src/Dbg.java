@@ -87,4 +87,31 @@ public class Dbg
 		}
 		return r;
 	}
+
+	/// Print Matrix4f
+	public static void prtM4f(String s, Matrix4f m)
+	{
+		Dbg.p(String.format("%sfloat [][]{\n", s));
+		for (int i = 0; i < 4; i += 1)
+		{
+			Dbg.p("  {");
+			for (int j = 0; j < 4; j += 1)
+			{
+				Dbg.p(String.format("%f", m.Get(i,j)));
+				if (j < 3) Dbg.p(", ");
+			}
+			Dbg.p("}");
+			if (i < 3) Dbg.p(",");
+			Dbg.p("\n");
+
+		}
+		Dbg.p("}\n");
+	}
+
+	/// Print Vector4f
+	public static void prtV4f(String s, Vector4f v)
+	{
+		Dbg.p(String.format("%s{ %4.3f, %4.3f, %4.3f, %4.3f }", s, v.GetX(), v.GetY(), v.GetZ(), v.GetW()));
+	}
+
 }

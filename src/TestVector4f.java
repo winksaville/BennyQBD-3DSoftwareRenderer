@@ -30,16 +30,10 @@ public class TestVector4f
 		return true;
 	}
 
-	/// Return true of pSelf.data == pOther.data
-	public static void prtV4f(String s, Vector4f v)
-	{
-		Dbg.p(String.format("%s{ %4.3f, %4.3f, %4.3f, %4.3f }", s, v.GetX(), v.GetY(), v.GetZ(), v.GetW()));
-	}
-
 	static void testConstructor() {
 		Dbg.p("testConstructor\n");
 		Vector4f v1 = new Vector4f(1, 2, 3, 4);
-		prtV4f("v1=", v1); Dbg.p("\n");
+		Dbg.prtV4f("v1=", v1); Dbg.p("\n");
 		assert v1.GetX() == 1;
 		assert v1.GetY() == 2;
 		assert v1.GetZ() == 3;
@@ -64,7 +58,7 @@ public class TestVector4f
 		Vector4f v1 = new Vector4f(1.5f, 2.5f, 3.5f, 4.5f);
 		Vector4f v2 = new Vector4f(4.5f, 3.5f, 2.5f, 1.5f);
 		Vector4f v = v1.Sub(v2);
-		prtV4f("v=", v); Dbg.p("\n");
+		Dbg.prtV4f("v=", v); Dbg.p("\n");
 		assert eql(v, new Vector4f(v1.GetX() - v2.GetX(), v1.GetY() - v2.GetY(), v1.GetZ() - v2.GetZ(), v1.GetW() - v2.GetW()));
 	}
 
@@ -98,7 +92,7 @@ public class TestVector4f
 		v1 = new Vector4f(1.5f, 2.5f, 3.5f);
 		v2 = new Vector4f(4.5f, 3.5f, 2.5f);
 		v = v1.Cross(v2);
-		prtV4f("v=", v); Dbg.p("\n");
+		Dbg.prtV4f("v=", v); Dbg.p("\n");
 
 		assert eql(v, new Vector4f(
 					(v1.GetY() * v2.GetZ()) - (v1.GetZ() * v2.GetY()),

@@ -33,26 +33,6 @@ public class TestMatrix4f
 		return true;
 	}
 
-	/// Return print Matrix4f
-	public static void prtM4f(String s, Matrix4f m)
-	{
-		Dbg.p(String.format("%sfloat [][]{\n", s));
-		for (int i = 0; i < 4; i += 1)
-		{
-			Dbg.p("  {");
-			for (int j = 0; j < 4; j += 1)
-			{
-				Dbg.p(String.format("%f", m.Get(i,j)));
-				if (j < 3) Dbg.p(", ");
-			}
-			Dbg.p("}");
-			if (i < 3) Dbg.p(",");
-			Dbg.p("\n");
-
-		}
-		Dbg.p("}\n");
-	}
-
 	static void identity()
 	{
 		Matrix4f m = new Matrix4f();
@@ -87,7 +67,7 @@ public class TestMatrix4f
 			{ 9, 10, 11, 12 },
 			{ 13, 14, 15, 16 },
 		});
-		if (DBG) prtM4f("matrix.4x4*4x4: m1\n", m1);
+		if (DBG) Dbg.prtM4f("matrix.4x4*4x4: m1\n", m1);
 
 		Matrix4f m2 = new Matrix4f();
 		m2.SetM(new float [][]{
@@ -96,10 +76,10 @@ public class TestMatrix4f
 			{ 5, 6, 7, 8 },
 			{ 1, 2, 3, 4 },
 		});
-		if (DBG) prtM4f("matrix.4x4*4x4: m2\n", m2);
+		if (DBG) Dbg.prtM4f("matrix.4x4*4x4: m2\n", m2);
 
 		Matrix4f m3 = m1.Mul(m2);
-		if (DBG) prtM4f("matrix.4x4*4x4: m3\n", m3);
+		if (DBG) Dbg.prtM4f("matrix.4x4*4x4: m3\n", m3);
 
 		Matrix4f expected = new Matrix4f();
 		expected.SetM(new float[][] {
@@ -128,7 +108,7 @@ public class TestMatrix4f
 				(m1.Get(3, 0) * m2.Get(0, 3)) + (m1.Get(3, 1) * m2.Get(1, 3)) + (m1.Get(3, 2) * m2.Get(2, 3)) + (m1.Get(3, 3) * m2.Get(3, 3))
 			}
 		});
-		if (DBG) prtM4f("matrix.4x4*4x4: expected\n", expected);
+		if (DBG) Dbg.prtM4f("matrix.4x4*4x4: expected\n", expected);
 		assert eql(m3, expected);
 	}
 }
