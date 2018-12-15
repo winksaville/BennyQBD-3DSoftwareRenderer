@@ -83,25 +83,48 @@ public class Main
 			if(input.GetKey(KeyEvent.VK_ESCAPE)) {
 				System.exit(0);
 			}
-			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_CONTROL)) {
-				System.out.printf("VK_RIGHT VK_CONTROL+location=%d\n", input.GetKeyLocation(KeyEvent.VK_CONTROL));
+			float xAxisRotation = 0;
+			float yAxisRotation = 0;
+			float zAxisRotation = 0;
+			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_LEFT)) {
+				xAxisRotation = (float)Math.toRadians(1);
 			}
-			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_SHIFT)) {
-				System.out.printf("VK_RIGHT VK_SHIFT+location=%d\n", input.GetKeyLocation(KeyEvent.VK_SHIFT));
+			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_LEFT)) {
+				xAxisRotation = (float)-Math.toRadians(1);
 			}
-			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_CONTROL)) {
-				System.out.printf("VK_LEFT VK_CONTROL+location=%d\n", input.GetKeyLocation(KeyEvent.VK_CONTROL));
+
+			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_SHIFT) && (input.GetKeyLocation(KeyEvent.VK_SHIFT) == KeyEvent.KEY_LOCATION_LEFT)) {
+				yAxisRotation = (float)Math.toRadians(1);
 			}
-			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_SHIFT)) {
-				System.out.printf("VK_LEFT VK_SHIFT+location=%d\n", input.GetKeyLocation(KeyEvent.VK_SHIFT));
+			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_SHIFT) && (input.GetKeyLocation(KeyEvent.VK_SHIFT) == KeyEvent.KEY_LOCATION_LEFT)) {
+				yAxisRotation = (float)-Math.toRadians(1);
+			}
+
+			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_RIGHT)) {
+				zAxisRotation = (float)Math.toRadians(1);
+			}
+			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_RIGHT)) {
+				zAxisRotation = (float)-Math.toRadians(1);
+			}
+			Transform monkeyTransformX = monkeyTransform.Rotate(new Quaternion(new Vector4f(1,0,0), xAxisRotation));
+			Transform monkeyTransformY = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,1,0), yAxisRotation));
+			Transform monkeyTransformZ = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,0,1), zAxisRotation));
+
+			// I don't know how to combine them so only one at a time.
+			if (xAxisRotation != 0) {
+				System.out.printf("X-axis=%4.3f\n", xAxisRotation);
+				monkeyTransform = monkeyTransformX;
+			} else if (yAxisRotation != 0) {
+				System.out.printf("Y-axis=%4.3f\n", yAxisRotation);
+				monkeyTransform = monkeyTransformY;
+			} else if (zAxisRotation != 0) {
+				System.out.printf("Z-axis=%4.3f\n", zAxisRotation);
+				monkeyTransform = monkeyTransformZ;
 			}
 
 			Matrix4f vp;
 			camera.Update(input, delta);
-			vp = camera.GetViewProjection(); // Dynamic viewPerspective
-			//vp = viewPerspective; // Static viewPerspective
-
-			monkeyTransform = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,1,0), delta));
+			vp = camera.GetViewProjection();
 
 			target.Clear((byte)0x00);
 			target.ClearDepthBuffer();
