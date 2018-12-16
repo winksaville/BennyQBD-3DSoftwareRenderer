@@ -106,21 +106,8 @@ public class Main
 			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_RIGHT)) {
 				zAxisRotation = (float)-Math.toRadians(1);
 			}
-			Transform monkeyTransformX = monkeyTransform.Rotate(new Quaternion(new Vector4f(1,0,0), xAxisRotation));
-			Transform monkeyTransformY = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,1,0), yAxisRotation));
-			Transform monkeyTransformZ = monkeyTransform.Rotate(new Quaternion(new Vector4f(0,0,1), zAxisRotation));
-
-			// I don't know how to combine them so only one at a time.
-			if (xAxisRotation != 0) {
-				System.out.printf("X-axis=%4.3f\n", xAxisRotation);
-				monkeyTransform = monkeyTransformX;
-			} else if (yAxisRotation != 0) {
-				System.out.printf("Y-axis=%4.3f\n", yAxisRotation);
-				monkeyTransform = monkeyTransformY;
-			} else if (zAxisRotation != 0) {
-				System.out.printf("Z-axis=%4.3f\n", zAxisRotation);
-				monkeyTransform = monkeyTransformZ;
-			}
+			System.out.printf("Y-axis=%4.3f X-axis=%4.3f Z-axis=%4.3f\n", yAxisRotation, xAxisRotation, zAxisRotation);
+			monkeyTransform = monkeyTransform.Rotate(new Quaternion(yAxisRotation, xAxisRotation, zAxisRotation));
 
 			Matrix4f vp;
 			camera.Update(input, delta);
