@@ -31,13 +31,13 @@ public class Quaternion
 		float sinHalfAngleY = (float)Math.sin(yaw * 0.5);
 		float cosHalfAngleX = (float)Math.cos(pitch * 0.5);
 		float sinHalfAngleX = (float)Math.sin(pitch * 0.5);
-		float cosHalfAngleZ = (float)Math.cos(yaw * 0.5);
-		float sinHalfAngleZ = (float)Math.sin(yaw * 0.5);
+		float cosHalfAngleZ = (float)Math.cos(roll * 0.5);
+		float sinHalfAngleZ = (float)Math.sin(roll * 0.5);
 
-		this.m_x = cosHalfAngleY * cosHalfAngleX * sinHalfAngleZ - sinHalfAngleY * sinHalfAngleX * cosHalfAngleZ;
-		this.m_y = sinHalfAngleY * cosHalfAngleX * sinHalfAngleZ + cosHalfAngleY * sinHalfAngleX * cosHalfAngleZ;
-		this.m_z = sinHalfAngleY * cosHalfAngleX * cosHalfAngleZ - cosHalfAngleY * sinHalfAngleX * sinHalfAngleZ;
 		this.m_w = cosHalfAngleY * cosHalfAngleX * cosHalfAngleZ + sinHalfAngleY * sinHalfAngleX * sinHalfAngleZ;
+		this.m_z = cosHalfAngleY * cosHalfAngleX * sinHalfAngleZ - sinHalfAngleY * sinHalfAngleX * cosHalfAngleZ;
+		this.m_x = sinHalfAngleY * cosHalfAngleX * sinHalfAngleZ + cosHalfAngleY * sinHalfAngleX * cosHalfAngleZ;
+		this.m_y = sinHalfAngleY * cosHalfAngleX * cosHalfAngleZ - cosHalfAngleY * sinHalfAngleX * sinHalfAngleZ;
 	}
 
 	public float Length()
