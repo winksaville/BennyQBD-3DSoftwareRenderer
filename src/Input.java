@@ -40,7 +40,8 @@ public class Input implements KeyListener, FocusListener,
 		MouseListener, MouseMotionListener {
 	private class KeyInfo {
 		boolean pressed = false;
-		int location = KeyEvent.KEY_LOCATION_UNKNOWN;
+		boolean left = false;
+		boolean right = false;
 	};
 	private KeyInfo[] keys = new KeyInfo[65536];
 	private boolean[] mouseButtons = new boolean[4];
@@ -99,7 +100,8 @@ public class Input implements KeyListener, FocusListener,
 	public void focusLost(FocusEvent e) {
 		for (int i = 0; i < keys.length; i++) {
 			keys[i].pressed = false;
-			keys[i].location = KeyEvent.KEY_LOCATION_UNKNOWN;
+			keys[i].left = false;
+			keys[i].right = false;
 		}
 		for (int i = 0; i < mouseButtons.length; i++)
 			mouseButtons[i] = false;
@@ -108,9 +110,16 @@ public class Input implements KeyListener, FocusListener,
 	/** Updates state when a key is pressed */
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
+
 		if (code > 0 && code < keys.length) {
+			if (e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) {
+				keys[code].left = true;
+			}
+			if (e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) {
+				keys[code].right = true;
+			}
 			keys[code].pressed = true;
-			keys[code].location = e.getKeyLocation();
+			System.out.printf("KeyPressed=%d left=%b right=%b\n", code, keys[code].left, keys[code].right);
 		}
 	}
 
@@ -118,8 +127,18 @@ public class Input implements KeyListener, FocusListener,
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();
 		if (code > 0 && code < keys.length) {
-			keys[code].pressed = false;
-			keys[code].location = KeyEvent.KEY_LOCATION_UNKNOWN;
+			if ((e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) && keys[code].left) {
+				keys[code].left = false;
+				System.out.printf("KeyReleased=%d left Released\n", code);
+			}
+			if ((e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) && keys[code].right) {
+				keys[code].right = false;
+				System.out.printf("KeyReleased=%d right Released\n", code);
+			}
+			if (!keys[code].left && !keys[code].right) {
+				keys[code].pressed = false;
+				System.out.printf("KeyReleased=%d NO L/R\n", code);
+			}
 		}
 	}
 
@@ -138,16 +157,29 @@ public class Input implements KeyListener, FocusListener,
 	}
 
 	/**
-	 * Gets the keys location if pressed. If not pressed returns KeyEvent.KEY_LOCATION_UNKNOWN
+	 * Gets if the left key is pressed
 	 *
 	 * @param key The key to test
-	 * @return KeyEvent.KEY_LOCATION_{LEFT|NUMPAD|RIGHT|STANDARD|UNKNOWN}
+	 * @return true if left key is pressed
 	 */
-	public int GetKeyLocation(int key) {
+	public boolean GetKeyLeft(int key) {
 		if (GetKey(key))
-			return keys[key].location;
+			return keys[key].left;
 		else
-			return KeyEvent.KEY_LOCATION_UNKNOWN;
+			return false;
+	}
+
+	/**
+	 * Gets if the right key is pressed
+	 *
+	 * @param key The key to test
+	 * @return true if right key is pressed
+	 */
+	public boolean GetKeyRight(int key) {
+		if (GetKey(key))
+			return keys[key].right;
+		else
+			return false;
 	}
 
 	/**

@@ -35,6 +35,108 @@ import java.awt.event.KeyEvent;
  *
  * Any other use should be placed in a separate class
  */
+enum ModifierKeyType { None, Left, Right }
+
+class RotationInput {
+
+	int plusActionKey;
+	int negActionKey;
+	ModifierKeyType modifierKeyType;
+	int modifierKey;
+	float deltaDegrees;
+
+	boolean changed;
+	boolean pressedPlus;
+	boolean pressedNeg;
+	float rotation;
+
+	RotationInput(float deltaDegrees, int plusActionKey, int negActionKey, ModifierKeyType modifierKeyType, int modifierKey) {
+		this.deltaDegrees = deltaDegrees;
+		this.plusActionKey = plusActionKey;
+		this.negActionKey = negActionKey;
+		this.modifierKeyType = modifierKeyType;
+		this.modifierKey = modifierKey;
+		this.changed = false;
+		this.pressedPlus = false;
+		this.pressedNeg = false;
+		this.rotation = 0;
+	}
+
+	RotationInput(float deltaDegrees, int plusActionKey, int negActionKey) {
+		this.deltaDegrees = deltaDegrees;
+		this.plusActionKey = plusActionKey;
+		this.negActionKey = negActionKey;
+		this.modifierKeyType = ModifierKeyType.None;
+		this.modifierKey = 0;
+		this.changed = false;
+		this.pressedPlus = false;
+		this.pressedNeg = false;
+		this.rotation = 0;
+	}
+
+	void update(Input input) {
+		// Need to choose GetKeyLeft | GetKeyRight
+		if(!this.pressedPlus && input.GetKey(this.plusActionKey)) {
+			switch (modifierKeyType) {
+				case None:
+					this.pressedPlus = true;
+					break;
+				case Left:
+					if(input.GetKeyLeft(this.modifierKey)) {
+						this.pressedPlus = true;
+					}
+					break;
+				case Right:
+					if(input.GetKeyRight(this.modifierKey)) {
+						this.pressedPlus = true;
+					}
+					break;
+			}
+		}
+		if(this.pressedPlus && !input.GetKey(this.plusActionKey)) {
+			this.pressedPlus = false;
+			this.changed = true;
+			this.rotation = (float)Math.toRadians(this.deltaDegrees);
+			System.out.printf("RotationInput X+ %4.3f\n", this.rotation);
+		}
+		if(!this.pressedNeg && input.GetKey(this.negActionKey)) {
+			switch (modifierKeyType) {
+				case None:
+					this.pressedNeg = true;
+					break;
+				case Left:
+					if(input.GetKeyLeft(this.modifierKey)) {
+						this.pressedNeg = true;
+					}
+					break;
+				case Right:
+					if(input.GetKeyRight(this.modifierKey)) {
+						this.pressedNeg = true;
+					}
+					break;
+			}
+		}
+		if(this.pressedNeg && !input.GetKey(this.negActionKey)) {
+			this.pressedNeg = false;
+			this.changed = true;
+			this.rotation = (float)-Math.toRadians(this.deltaDegrees);
+			System.out.printf("RotationInput X- %4.3f\n", this.rotation);
+		}
+	}
+
+	boolean changed() {
+		return this.changed;
+	}
+
+	float getRotation() {
+		this.changed = false;
+		float value = this.rotation;
+		System.out.printf("RotationInput.getRotation = %4.3f\n", value);
+		this.rotation = 0;
+		return value;
+	}
+}
+
 public class Main
 {
 	static boolean DBG = true;
@@ -71,10 +173,15 @@ public class Main
 		Matrix4f mvp = viewPerspective.Mul(monkeyTransform.GetTransformation());
 		if (DBG) Dbg.prtM4f("mvp=", mvp);
 
+		RotationInput xRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_CONTROL);
+		RotationInput yRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_SHIFT);
+		RotationInput zRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Right, KeyEvent.VK_CONTROL);
+
 		float rotCounter = 0.0f;
 		long previousTime = System.nanoTime();
 		while(true)
 		{
+			Matrix4f mtm4f;
 			long currentTime = System.nanoTime();
 			float delta = (float)((currentTime - previousTime)/1000000000.0);
 			previousTime = currentTime;
@@ -83,31 +190,23 @@ public class Main
 			if(input.GetKey(KeyEvent.VK_ESCAPE)) {
 				System.exit(0);
 			}
-			float xAxisRotation = 0;
-			float yAxisRotation = 0;
-			float zAxisRotation = 0;
-			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_LEFT)) {
-				xAxisRotation = (float)Math.toRadians(1);
-			}
-			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_LEFT)) {
-				xAxisRotation = (float)-Math.toRadians(1);
-			}
 
-			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_SHIFT) && (input.GetKeyLocation(KeyEvent.VK_SHIFT) == KeyEvent.KEY_LOCATION_LEFT)) {
-				yAxisRotation = (float)Math.toRadians(1);
-			}
-			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_SHIFT) && (input.GetKeyLocation(KeyEvent.VK_SHIFT) == KeyEvent.KEY_LOCATION_LEFT)) {
-				yAxisRotation = (float)-Math.toRadians(1);
-			}
+			xRotationInput.update(input);
+			yRotationInput.update(input);
+			zRotationInput.update(input);
 
-			if(input.GetKey(KeyEvent.VK_LEFT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_RIGHT)) {
-				zAxisRotation = (float)Math.toRadians(1);
+			if (xRotationInput.changed() || yRotationInput.changed() || zRotationInput.changed()) {
+				float xAxisRotation = xRotationInput.getRotation();
+				float yAxisRotation = yRotationInput.getRotation();
+				float zAxisRotation = zRotationInput.getRotation();
+
+				System.out.printf("Y-axis=%4.3f X-axis=%4.3f Z-axis=%4.3f\n", yAxisRotation, xAxisRotation, zAxisRotation);
+				monkeyTransform = monkeyTransform.Rotate(new Quaternion(yAxisRotation, xAxisRotation, zAxisRotation));
+				mtm4f = monkeyTransform.GetTransformation();
+				Dbg.prtM4f("mtf4f:\n", mtm4f);
+			} else {
+				mtm4f = monkeyTransform.GetTransformation();
 			}
-			if(input.GetKey(KeyEvent.VK_RIGHT) && input.GetKey(KeyEvent.VK_CONTROL) && (input.GetKeyLocation(KeyEvent.VK_CONTROL) == KeyEvent.KEY_LOCATION_RIGHT)) {
-				zAxisRotation = (float)-Math.toRadians(1);
-			}
-			System.out.printf("Y-axis=%4.3f X-axis=%4.3f Z-axis=%4.3f\n", yAxisRotation, xAxisRotation, zAxisRotation);
-			monkeyTransform = monkeyTransform.Rotate(new Quaternion(yAxisRotation, xAxisRotation, zAxisRotation));
 
 			Matrix4f vp;
 			camera.Update(input, delta);
@@ -115,7 +214,7 @@ public class Main
 
 			target.Clear((byte)0x00);
 			target.ClearDepthBuffer();
-			monkeyMesh.Draw(target, vp, monkeyTransform.GetTransformation(), texture2);
+			monkeyMesh.Draw(target, vp, mtm4f, texture2);
 			terrainMesh.Draw(target, vp, terrainTransform.GetTransformation(), texture);
 
 			display.SwapBuffers();
