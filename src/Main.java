@@ -165,7 +165,7 @@ public class Main
 		Matrix4f cameraViewPerspective =
 			new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
 				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
-		Vector4f cameraPosition = new Vector4f(0, 0, 3);
+		Vector4f cameraPosition = new Vector4f(1, 1, 3);
 		Vector4f cameraLookAt = new Vector4f(0, 0, 0);
 		Camera camera = new Camera(cameraViewPerspective, cameraPosition, cameraLookAt);
 		if (DBG) {
