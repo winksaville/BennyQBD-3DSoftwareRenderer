@@ -157,20 +157,25 @@ public class Main
 		Bitmap texture = new Bitmap("./res/bricks.jpg");
 		Bitmap texture2 = new Bitmap("./res/bricks2.jpg");
 		Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
-		Transform monkeyTransform = new Transform(new Vector4f(0,0.0f,3.0f));
+		Transform monkeyTransform = new Transform(new Vector4f(0,0.0f,0.0f));
 
 		Mesh terrainMesh = new Mesh("./res/terrain2.obj");
 		Transform terrainTransform = new Transform(new Vector4f(0,-1.0f,0.0f));
 
-		Matrix4f viewPerspective =
+		Matrix4f cameraViewPerspective =
 			new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
 				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
-		if (DBG) Dbg.prtM4f("viewPerspective=", viewPerspective);
-		Camera camera = new Camera(viewPerspective);
-		
-		if (DBG) Dbg.prtM4f("monkeyTransform=", monkeyTransform.GetTransformation());
+		Vector4f cameraPosition = new Vector4f(0, 0, -3);
+		Vector4f cameraLookAt = new Vector4f(0, 0, 0);
+		Camera camera = new Camera(cameraViewPerspective, cameraPosition, cameraLookAt);
+		if (DBG) {
+			Dbg.prtV4f("cameraPosition=", cameraPosition); Dbg.p("\n");
+			Dbg.prtV4f("cameraLookAt=", cameraLookAt); Dbg.p("\n");
+			Dbg.prtM4f("cameraViewPerspective=", cameraViewPerspective);
+			Dbg.prtM4f("monkeyTransform=", monkeyTransform.GetTransformation());
+		}
 
-		Matrix4f mvp = viewPerspective.Mul(monkeyTransform.GetTransformation());
+		Matrix4f mvp = cameraViewPerspective.Mul(monkeyTransform.GetTransformation());
 		if (DBG) Dbg.prtM4f("mvp=", mvp);
 
 		RotationInput xRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_CONTROL);

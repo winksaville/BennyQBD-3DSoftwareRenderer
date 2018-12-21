@@ -18,6 +18,14 @@ public class Camera
 		this.m_transform = new Transform();
 	}
 
+	public Camera(Matrix4f projection, Vector4f position, Vector4f lookAtPoint)
+	{
+		this.m_projection = projection;
+		Transform transform = new Transform(position);
+		Quaternion quarternion = transform.GetLookAtRotation(lookAtPoint, new Vector4f(0, 1, 0));
+		this.m_transform = transform.Rotate(quarternion);
+	}
+
 	public Matrix4f GetViewProjection()
 	{
 		Matrix4f cameraRotation = GetTransform().GetTransformedRot().Conjugate().ToRotationMatrix();
