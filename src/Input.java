@@ -119,7 +119,7 @@ public class Input implements KeyListener, FocusListener,
 				keys[code].right = true;
 			}
 			keys[code].pressed = true;
-			System.out.printf("KeyPressed=%d left=%b right=%b\n", code, keys[code].left, keys[code].right);
+			//System.out.printf("KeyPressed=%d left=%b right=%b\n", code, keys[code].left, keys[code].right);
 		}
 	}
 
