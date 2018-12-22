@@ -157,7 +157,9 @@ public class Main
 		Bitmap texture = new Bitmap("./res/bricks.jpg");
 		Bitmap texture2 = new Bitmap("./res/bricks2.jpg");
 		Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
-		Transform monkeyTransform = new Transform(new Vector4f(0,0.0f,0.0f));
+		//Transform monkeyTransform = new Transform(new Vector4f(0,0.0f,0.0f));
+
+		Entity monkeyEntity = new Entity(monkeyMesh, new Vector4f(0, 0, 0), new Vector4f(0, 0, 1), new Vector4f(0, 1, 0));
 
 		Mesh terrainMesh = new Mesh("./res/terrain2.obj");
 		Transform terrainTransform = new Transform(new Vector4f(0,-1.0f,0.0f));
@@ -165,22 +167,19 @@ public class Main
 		Matrix4f cameraViewPerspective =
 			new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
 				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
-		Vector4f cameraPosition = new Vector4f(1, 1, 3);
+		Vector4f cameraPosition = new Vector4f(0, 0, 3);
 		Vector4f cameraLookAt = new Vector4f(0, 0, 0);
 		Camera camera = new Camera(cameraViewPerspective, cameraPosition, cameraLookAt);
 		if (DBG) {
 			Dbg.prtV4f("cameraPosition=", cameraPosition); Dbg.p("\n");
 			Dbg.prtV4f("cameraLookAt=", cameraLookAt); Dbg.p("\n");
 			Dbg.prtM4f("cameraViewPerspective=", cameraViewPerspective);
-			Dbg.prtM4f("monkeyTransform=", monkeyTransform.GetTransformation());
+			Dbg.prtM4f("monkeyEntity transformation=", monkeyEntity.GetTransform().GetTransformation());
 		}
 
-		Matrix4f mvp = cameraViewPerspective.Mul(monkeyTransform.GetTransformation());
-		if (DBG) Dbg.prtM4f("mvp=", mvp);
-
-		RotationInput xRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_CONTROL);
-		RotationInput yRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_SHIFT);
-		RotationInput zRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Right, KeyEvent.VK_CONTROL);
+		//RotationInput xRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_CONTROL);
+		//RotationInput yRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_SHIFT);
+		//RotationInput zRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Right, KeyEvent.VK_CONTROL);
 
 		float rotCounter = 0.0f;
 		long previousTime = System.nanoTime();
@@ -196,30 +195,35 @@ public class Main
 				System.exit(0);
 			}
 
-			xRotationInput.update(input);
-			yRotationInput.update(input);
-			zRotationInput.update(input);
+			//xRotationInput.update(input);
+			//yRotationInput.update(input);
+			//zRotationInput.update(input);
 
-			if (xRotationInput.changed() || yRotationInput.changed() || zRotationInput.changed()) {
-				float xAxisRotation = xRotationInput.getRotation();
-				float yAxisRotation = yRotationInput.getRotation();
-				float zAxisRotation = zRotationInput.getRotation();
+			//if (xRotationInput.changed() || yRotationInput.changed() || zRotationInput.changed()) {
+			//	float xAxisRotation = xRotationInput.getRotation();
+			//	float yAxisRotation = yRotationInput.getRotation();
+			//	float zAxisRotation = zRotationInput.getRotation();
 
-				System.out.printf("Y-axis=%4.3f X-axis=%4.3f Z-axis=%4.3f\n", yAxisRotation, xAxisRotation, zAxisRotation);
-				monkeyTransform = monkeyTransform.Rotate(new Quaternion(yAxisRotation, xAxisRotation, zAxisRotation));
-				mtm4f = monkeyTransform.GetTransformation();
-				Dbg.prtM4f("mtf4f:\n", mtm4f);
-			} else {
-				mtm4f = monkeyTransform.GetTransformation();
-			}
+			//	System.out.printf("Y-axis=%4.3f X-axis=%4.3f Z-axis=%4.3f\n", yAxisRotation, xAxisRotation, zAxisRotation);
+			//	monkeyTransform = monkeyTransform.Rotate(new Quaternion(yAxisRotation, xAxisRotation, zAxisRotation));
+			//	mtm4f = monkeyTransform.GetTransformation();
+			//	Dbg.prtM4f("mtf4f:\n", mtm4f);
+			//} else {
+			//	mtm4f = monkeyTransform.GetTransformation();
+			//}
 
-			Matrix4f vp;
-			camera.Update(input, delta);
-			vp = camera.GetViewProjection();
+			//camera.Update(input, delta);
+
+			float rotationDelta = 5.0f * delta;
+			float translationDelta = 2.0f * delta;
+			monkeyEntity.Update(input, rotationDelta, translationDelta);
+
+			Matrix4f vp = camera.GetViewProjection();
 
 			target.Clear((byte)0x00);
 			target.ClearDepthBuffer();
-			monkeyMesh.Draw(target, vp, mtm4f, texture2);
+
+			monkeyEntity.GetMesh().Draw(target, vp, monkeyEntity.GetTransform().GetTransformation(), texture2);
 			terrainMesh.Draw(target, vp, terrainTransform.GetTransformation(), texture);
 
 			display.SwapBuffers();
