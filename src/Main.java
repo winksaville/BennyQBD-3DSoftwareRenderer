@@ -37,106 +37,6 @@ import java.awt.event.KeyEvent;
  */
 enum ModifierKeyType { None, Left, Right }
 
-class RotationInput {
-
-	int plusActionKey;
-	int negActionKey;
-	ModifierKeyType modifierKeyType;
-	int modifierKey;
-	float deltaDegrees;
-
-	boolean changed;
-	boolean pressedPlus;
-	boolean pressedNeg;
-	float rotation;
-
-	RotationInput(float deltaDegrees, int plusActionKey, int negActionKey, ModifierKeyType modifierKeyType, int modifierKey) {
-		this.deltaDegrees = deltaDegrees;
-		this.plusActionKey = plusActionKey;
-		this.negActionKey = negActionKey;
-		this.modifierKeyType = modifierKeyType;
-		this.modifierKey = modifierKey;
-		this.changed = false;
-		this.pressedPlus = false;
-		this.pressedNeg = false;
-		this.rotation = 0;
-	}
-
-	RotationInput(float deltaDegrees, int plusActionKey, int negActionKey) {
-		this.deltaDegrees = deltaDegrees;
-		this.plusActionKey = plusActionKey;
-		this.negActionKey = negActionKey;
-		this.modifierKeyType = ModifierKeyType.None;
-		this.modifierKey = 0;
-		this.changed = false;
-		this.pressedPlus = false;
-		this.pressedNeg = false;
-		this.rotation = 0;
-	}
-
-	void update(Input input) {
-		// Need to choose GetKeyLeft | GetKeyRight
-		if(!this.pressedPlus && input.GetKey(this.plusActionKey)) {
-			switch (modifierKeyType) {
-				case None:
-					this.pressedPlus = true;
-					break;
-				case Left:
-					if(input.GetKeyLeft(this.modifierKey)) {
-						this.pressedPlus = true;
-					}
-					break;
-				case Right:
-					if(input.GetKeyRight(this.modifierKey)) {
-						this.pressedPlus = true;
-					}
-					break;
-			}
-		}
-		if(this.pressedPlus && !input.GetKey(this.plusActionKey)) {
-			this.pressedPlus = false;
-			this.changed = true;
-			this.rotation = (float)Math.toRadians(this.deltaDegrees);
-			System.out.printf("RotationInput X+ %4.3f\n", this.rotation);
-		}
-		if(!this.pressedNeg && input.GetKey(this.negActionKey)) {
-			switch (modifierKeyType) {
-				case None:
-					this.pressedNeg = true;
-					break;
-				case Left:
-					if(input.GetKeyLeft(this.modifierKey)) {
-						this.pressedNeg = true;
-					}
-					break;
-				case Right:
-					if(input.GetKeyRight(this.modifierKey)) {
-						this.pressedNeg = true;
-					}
-					break;
-			}
-		}
-		if(this.pressedNeg && !input.GetKey(this.negActionKey)) {
-			this.pressedNeg = false;
-			this.changed = true;
-			this.rotation = (float)-Math.toRadians(this.deltaDegrees);
-			System.out.printf("RotationInput X- %4.3f\n", this.rotation);
-		}
-	}
-
-	boolean changed() {
-		return this.changed;
-	}
-
-	float getRotation() {
-		this.changed = false;
-		float value = this.rotation;
-		System.out.printf("RotationInput.getRotation = %4.3f\n", value);
-		this.rotation = 0;
-		return value;
-	}
-}
-
 public class Main
 {
 	static boolean DBG = true;
@@ -156,10 +56,12 @@ public class Main
 
 		Bitmap texture = new Bitmap("./res/bricks.jpg");
 		Bitmap texture2 = new Bitmap("./res/bricks2.jpg");
-		Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
-		//Transform monkeyTransform = new Transform(new Vector4f(0,0.0f,0.0f));
 
-		Entity monkeyEntity = new Entity(monkeyMesh, new Vector4f(0, 0, 0), new Vector4f(0, 0, 1), new Vector4f(0, 1, 0));
+		Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
+		Vector4f monkeyLocationPoint = new Vector4f(0, 0, 0);
+		Vector4f monkeyLookAtPoint = new Vector4f(0, 0, 1);
+		Vector4f monkeyUpAxis = new Vector4f(0, 1, 0);
+		Entity monkeyEntity = new Entity(monkeyMesh, monkeyLocationPoint, monkeyLookAtPoint, monkeyUpAxis);
 
 		Mesh terrainMesh = new Mesh("./res/terrain2.obj");
 		Transform terrainTransform = new Transform(new Vector4f(0, -1, 0));
@@ -171,15 +73,11 @@ public class Main
 		Vector4f cameraLookAt = new Vector4f(0, 0, 0);
 		Camera camera = new Camera(cameraViewPerspective, cameraPosition, cameraLookAt);
 		if (DBG) {
-			Dbg.prtV4f("cameraPosition=", cameraPosition); Dbg.p("\n");
-			Dbg.prtV4f("cameraLookAt=", cameraLookAt); Dbg.p("\n");
-			Dbg.prtM4f("cameraViewPerspective=", cameraViewPerspective);
-			Dbg.prtM4f("monkeyEntity transformation=", monkeyEntity.GetTransform().GetTransformation());
+			Dbg.prtV4f("cameraPosition:", cameraPosition); Dbg.p("\n");
+			Dbg.prtV4f("cameraLookAt:", cameraLookAt); Dbg.p("\n");
+			Dbg.prtM4f("cameraViewPerspective:", cameraViewPerspective);
+			Dbg.prtM4f("monkey matrix:", monkeyEntity.GetTransform().GetTransformation());
 		}
-
-		//RotationInput xRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_CONTROL);
-		//RotationInput yRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Left, KeyEvent.VK_SHIFT);
-		//RotationInput zRotationInput = new RotationInput(10.0f, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, ModifierKeyType.Right, KeyEvent.VK_CONTROL);
 
 		float rotCounter = 0.0f;
 		long previousTime = System.nanoTime();
@@ -194,23 +92,6 @@ public class Main
 			if(input.GetKey(KeyEvent.VK_ESCAPE)) {
 				System.exit(0);
 			}
-
-			//xRotationInput.update(input);
-			//yRotationInput.update(input);
-			//zRotationInput.update(input);
-
-			//if (xRotationInput.changed() || yRotationInput.changed() || zRotationInput.changed()) {
-			//	float xAxisRotation = xRotationInput.getRotation();
-			//	float yAxisRotation = yRotationInput.getRotation();
-			//	float zAxisRotation = zRotationInput.getRotation();
-
-			//	System.out.printf("Y-axis=%4.3f X-axis=%4.3f Z-axis=%4.3f\n", yAxisRotation, xAxisRotation, zAxisRotation);
-			//	monkeyTransform = monkeyTransform.Rotate(new Quaternion(yAxisRotation, xAxisRotation, zAxisRotation));
-			//	mtm4f = monkeyTransform.GetTransformation();
-			//	Dbg.prtM4f("mtf4f:\n", mtm4f);
-			//} else {
-			//	mtm4f = monkeyTransform.GetTransformation();
-			//}
 
 			//camera.Update(input, delta);
 
