@@ -69,7 +69,7 @@ public class Main
 		Matrix4f cameraViewPerspective =
 			new Matrix4f().InitPerspective((float)Math.toRadians(90.0f),
 				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
-		Vector4f cameraPosition = new Vector4f(0, 0, 3);
+		Vector4f cameraPosition = new Vector4f(0, 0, -3);
 		Vector4f cameraLookAt = new Vector4f(0, 0, 0);
 		Camera camera = new Camera(cameraViewPerspective, cameraPosition, cameraLookAt);
 		if (DBG) {
@@ -94,12 +94,11 @@ public class Main
 			}
 
 			//camera.Update(input, delta);
+			Matrix4f vp = camera.GetViewProjection();
 
 			float rotationDelta = 5.0f * delta;
 			float translationDelta = 2.0f * delta;
 			monkeyEntity.Update(input, rotationDelta, translationDelta);
-
-			Matrix4f vp = camera.GetViewProjection();
 
 			target.Clear((byte)0x00);
 			target.ClearDepthBuffer();
