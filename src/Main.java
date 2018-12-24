@@ -151,7 +151,7 @@ public class Main
 		TestMatrix4f.test();
 		TestVector4f.test();
 
-		Display display = new Display(800, 600, "Software Rendering");
+		Display display = new Display(1024, 1024, "Software Rendering");
 		RenderContext target = display.GetFrameBuffer();
 
 		Bitmap texture = new Bitmap("./res/bricks.jpg");
@@ -162,10 +162,10 @@ public class Main
 		Entity monkeyEntity = new Entity(monkeyMesh, new Vector4f(0, 0, 0), new Vector4f(0, 0, 1), new Vector4f(0, 1, 0));
 
 		Mesh terrainMesh = new Mesh("./res/terrain2.obj");
-		Transform terrainTransform = new Transform(new Vector4f(0,-1.0f,0.0f));
+		Transform terrainTransform = new Transform(new Vector4f(0, -1, 0));
 
 		Matrix4f cameraViewPerspective =
-			new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
+			new Matrix4f().InitPerspective((float)Math.toRadians(90.0f),
 				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
 		Vector4f cameraPosition = new Vector4f(0, 0, 3);
 		Vector4f cameraLookAt = new Vector4f(0, 0, 0);
