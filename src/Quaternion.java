@@ -200,6 +200,11 @@ public class Quaternion
 		return new Vector4f(0,0,-1,1).Rotate(this);
 	}
 
+	public Vector4f GetZaxis()
+	{
+		return GetForward();
+	}
+
 	public Vector4f GetUp()
 	{
 		return new Vector4f(0,1,0,1).Rotate(this);
@@ -210,6 +215,11 @@ public class Quaternion
 		return new Vector4f(0,-1,0,1).Rotate(this);
 	}
 
+	public Vector4f GetYaxis()
+	{
+		return GetUp();
+	}
+
 	public Vector4f GetRight()
 	{
 		return new Vector4f(1,0,0,1).Rotate(this);
@@ -218,6 +228,11 @@ public class Quaternion
 	public Vector4f GetLeft()
 	{
 		return new Vector4f(-1,0,0,1).Rotate(this);
+	}
+
+	public Vector4f GetXaxis()
+	{
+		return GetRight();
 	}
 	
 	public float GetX()

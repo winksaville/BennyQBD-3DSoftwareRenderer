@@ -97,62 +97,62 @@ class Movement {
 				switch (i) {
 					case X_TRANS_PLUS: {
 						if(DBG) Dbg.p("trans x+\n");
-						Translate(m_transform.GetRot().GetRight(), translationDelta);
+						Translate(m_transform.GetRot().GetXaxis(), translationDelta);
 						break;
 					}
 					case Y_TRANS_PLUS: {
 						if(DBG) Dbg.p("trans y+\n");
-						Translate(m_transform.GetRot().GetUp(), translationDelta);
+						Translate(m_transform.GetRot().GetYaxis(), translationDelta);
 						break;
 					}
 					case Z_TRANS_PLUS: {
 						if(DBG) Dbg.p("trans z+\n");
-						Translate(m_transform.GetRot().GetForward(), translationDelta);
+						Translate(m_transform.GetRot().GetZaxis(), translationDelta);
 						break;
 					}
 					case X_TRANS_NEG: {
 						if(DBG) Dbg.p("trans x-\n");
-						Translate(m_transform.GetRot().GetLeft(), translationDelta);
+						Translate(m_transform.GetRot().GetXaxis(), -translationDelta);
 						break;
 					}
 					case Y_TRANS_NEG: {
 						if(DBG) Dbg.p("trans y-\n");
-						Translate(m_transform.GetRot().GetDown(), translationDelta);
+						Translate(m_transform.GetRot().GetYaxis(), -translationDelta);
 						break;
 					}
 					case Z_TRANS_NEG: {
 						if(DBG) Dbg.p("trans z-\n");
-						Translate(m_transform.GetRot().GetBack(), translationDelta);
+						Translate(m_transform.GetRot().GetZaxis(), -translationDelta);
 						break;
 					}
 					case X_ROTATE_PLUS: {
 						if(DBG) Dbg.p("rotate x+\n");
-						Rotate(X_AXIS, rotationDelta);
+						Rotate(m_transform.GetRot().GetXaxis(), rotationDelta);
 						break;
 					}
 					case Y_ROTATE_PLUS: {
 						if(DBG) Dbg.p("rotate y+\n");
-						Rotate(Y_AXIS, rotationDelta);
+						Rotate(m_transform.GetRot().GetYaxis(), rotationDelta);
 						break;
 					}
 					case Z_ROTATE_PLUS: {
 						if(DBG) Dbg.p("rotate z+\n");
-						Rotate(Z_AXIS, rotationDelta);
+						Rotate(m_transform.GetRot().GetZaxis(), rotationDelta);
 						break;
 					}
 					case X_ROTATE_NEG: {
 						if(DBG) Dbg.p("rotate x-\n");
-						Rotate(X_AXIS, -rotationDelta);
+						Rotate(m_transform.GetRot().GetXaxis(), -rotationDelta);
 						break;
 					}
 					case Y_ROTATE_NEG: {
 						if(DBG) Dbg.p("rotate y-\n");
-						Rotate(Y_AXIS, -rotationDelta);
+						Rotate(m_transform.GetRot().GetYaxis(), -rotationDelta);
 						break;
 					}
 					case Z_ROTATE_NEG: {
 						if(DBG) Dbg.p("rotate z-\n");
-						Rotate(Z_AXIS, -rotationDelta);
+						Rotate(m_transform.GetRot().GetZaxis(), -rotationDelta);
 						break;
 					}
 				}
