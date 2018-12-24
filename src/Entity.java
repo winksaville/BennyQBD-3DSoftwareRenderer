@@ -12,7 +12,7 @@ public class Entity
 	//
 	//                 (k)
 	//                 +y     (i)
-	//                  |    -z
+	//                  |    +z
 	//                  |    /
 	//                  |   /
 	//                  |  /
@@ -24,15 +24,15 @@ public class Entity
 	//               /  |
 	//              /   |
 	//             /    |
-	//           +z     |
+	//           -z     |
 	//          (m)    -y
 	//                 (j)
 	// 
 	public Entity(Mesh mesh, Vector4f position, Vector4f lookAtPoint, Vector4f up)
 	{
 		this(mesh, position, lookAtPoint, up,
-			KeyEvent.VK_L, KeyEvent.VK_K, KeyEvent.VK_M,
-			KeyEvent.VK_H, KeyEvent.VK_J, KeyEvent.VK_I,
+			KeyEvent.VK_L, KeyEvent.VK_K, KeyEvent.VK_I,
+			KeyEvent.VK_H, KeyEvent.VK_J, KeyEvent.VK_M,
 			KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL);
 	}
 
@@ -42,8 +42,8 @@ public class Entity
 	// translationKey
 	//
 	//                 (yPlusKey)
-	//                 +y     (zNegKey)
-	//                  |    -z
+	//                 +y     (zPlusKey)
+	//                  |    +z
 	//                  |    /
 	//                  |   /
 	//                  |  /
@@ -55,8 +55,8 @@ public class Entity
 	//               /  |
 	//              /   |
 	//             /    |
-	//           +z     |
-	//    (zPlusKey)   -y
+	//           -z     |
+	//     (zNegKey)   -y
 	//                 (yNegKey)
 	// 
 	public Entity(Mesh mesh, Vector4f position, Vector4f lookAtPoint, Vector4f up,
