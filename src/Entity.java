@@ -11,7 +11,7 @@ public class Entity
 	// rotationKey = control
 	//
 	//                 (k)
-	//                 +y     (i)
+	//                 +y     (u)
 	//                  |    +z
 	//                  |    /
 	//                  |   /
@@ -25,14 +25,14 @@ public class Entity
 	//              /   |
 	//             /    |
 	//           -z     |
-	//          (m)    -y
+	//          (n)    -y
 	//                 (j)
 	// 
 	public Entity(Mesh mesh, Vector4f position, Vector4f lookAtPoint, Vector4f up)
 	{
 		this(mesh, position, lookAtPoint, up,
-			KeyEvent.VK_L, KeyEvent.VK_K, KeyEvent.VK_I,
-			KeyEvent.VK_H, KeyEvent.VK_J, KeyEvent.VK_M,
+			KeyEvent.VK_L, KeyEvent.VK_K, KeyEvent.VK_U,
+			KeyEvent.VK_H, KeyEvent.VK_J, KeyEvent.VK_N,
 			KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL);
 	}
 
