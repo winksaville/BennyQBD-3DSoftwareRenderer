@@ -86,7 +86,7 @@ public class Main
 		{
 			Matrix4f mtm4f;
 			long currentTime = System.nanoTime();
-			float delta = (float)((currentTime - previousTime)/1000000000.0);
+			float delta = (float)((currentTime - previousTime) / 1000000000.0);
 			previousTime = currentTime;
 
 			Input input = display.GetInput();
@@ -99,11 +99,11 @@ public class Main
 			}
 
 			if (focusCamera) {
-				camera.Update(input, delta);
+				camera.Update(input, currentTime, delta);
 			} else {
 				float rotationDelta = 5.0f * delta;
 				float translationDelta = 2.0f * delta;
-				monkeyEntity.Update(input, rotationDelta, translationDelta);
+				monkeyEntity.Update(input, currentTime, rotationDelta, translationDelta);
 			}
 			Matrix4f vp = camera.GetViewProjection();
 

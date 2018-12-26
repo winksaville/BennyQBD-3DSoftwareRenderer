@@ -74,9 +74,9 @@ public class Entity
 			translateKey, rotateKey);
 	}
 
-	public void Update(Input input, float translationDelta, float rotationDelta)
+	public void Update(Input input, long timeInNs, float translationDelta, float rotationDelta)
 	{
-		m_movement.Update(input, translationDelta, rotationDelta);
+		m_movement.Update(input, timeInNs, translationDelta, rotationDelta);
 	}
 
 	public Mesh GetMesh()

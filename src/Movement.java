@@ -92,7 +92,7 @@ class Movement {
 		return released;
 	}
 
-	public void Update(Input input, float translationDelta, float rotationDelta)
+	public void Update(Input input, long timeInNs, float translationDelta, float rotationDelta)
 	{
 		for (int i = 0; i < m_keys.length; i++) {
 			KeyInfo ki = m_keys[i];

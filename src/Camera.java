@@ -44,9 +44,9 @@ public class Camera
 		return m_projection.Mul(cameraRotation.Mul(cameraTranslation));
 	}
 
-	public void Update(Input input, float delta)
+	public void Update(Input input, long timeInNs, float delta)
 	{
-		m_movement.Update(input, delta * 2, delta * 2);
+		m_movement.Update(input, timeInNs, delta * 2, delta * 2);
 	}
 
 	private void Translate(Vector4f dir, float amt)
