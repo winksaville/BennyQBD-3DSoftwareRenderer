@@ -81,6 +81,7 @@ public class Main
 
 		float rotCounter = 0.0f;
 		long previousTime = System.nanoTime();
+		boolean focusCamera = false;
 		while(true)
 		{
 			Matrix4f mtm4f;
@@ -91,14 +92,21 @@ public class Main
 			Input input = display.GetInput();
 			if(input.GetKey(KeyEvent.VK_ESCAPE)) {
 				System.exit(0);
+			} else if(input.GetKey(KeyEvent.VK_M)) {
+				focusCamera = false;
+			} else if(input.GetKey(KeyEvent.VK_C)) {
+				focusCamera = true;
 			}
 
-			//camera.Update(input, delta);
+			if (focusCamera) {
+				camera.Update(input, delta);
+			} else {
+				float rotationDelta = 5.0f * delta;
+				float translationDelta = 2.0f * delta;
+				monkeyEntity.Update(input, rotationDelta, translationDelta);
+			}
 			Matrix4f vp = camera.GetViewProjection();
 
-			float rotationDelta = 5.0f * delta;
-			float translationDelta = 2.0f * delta;
-			monkeyEntity.Update(input, rotationDelta, translationDelta);
 
 			target.Clear((byte)0x00);
 			target.ClearDepthBuffer();
