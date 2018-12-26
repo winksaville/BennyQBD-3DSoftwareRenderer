@@ -38,6 +38,8 @@ import java.awt.event.MouseMotionListener;
  */
 public class Input implements KeyListener, FocusListener,
 		MouseListener, MouseMotionListener {
+	private boolean DBG = false;
+
 	private class KeyInfo {
 		int pressed = 0;
 		boolean left = false;
@@ -119,7 +121,7 @@ public class Input implements KeyListener, FocusListener,
 				keys[code].right = true;
 			}
 			keys[code].pressed = keys[code].pressed + 1;
-			System.out.printf("KeyPressed=%d:%d left=%b right=%b\n", code, keys[code].pressed, keys[code].left, keys[code].right);
+			if(DBG) Dbg.p(String.format("KeyPressed=%d:%d left=%b right=%b\n", code, keys[code].pressed, keys[code].left, keys[code].right));
 		}
 	}
 
@@ -129,15 +131,15 @@ public class Input implements KeyListener, FocusListener,
 		if (code > 0 && code < keys.length) {
 			if ((e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) && keys[code].left) {
 				keys[code].left = false;
-				System.out.printf("KeyReleased=%d left Released\n", code);
+				if(DBG) Dbg.p(String.format("KeyReleased=%d left Released\n", code));
 			}
 			if ((e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) && keys[code].right) {
 				keys[code].right = false;
-				System.out.printf("KeyReleased=%d right Released\n", code);
+				if(DBG) Dbg.p(String.format("KeyReleased=%d right Released\n", code));
 			}
 			if (!keys[code].left && !keys[code].right) {
 				keys[code].pressed = 0;
-				System.out.printf("KeyReleased=%d NO L/R\n", code);
+				if(DBG) Dbg.p(String.format("KeyReleased=%d NO L/R\n", code));
 			}
 		}
 	}
