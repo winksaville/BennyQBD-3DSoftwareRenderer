@@ -5,13 +5,19 @@ class Movement {
 	final boolean DBG = true;
 
 	private class KeyInfo {
+		long timeInNsBothPressed;
+		long repeatDelay;
+		long repeatSpeed;
 		int i;
 		int key1Pressed;
 		int key1;
 		int key2Pressed;
 		int key2;
 
-		KeyInfo(int i, int key1, int key2) {
+		KeyInfo(int i, int key1, int key2, long repeatDelay, long repeatSpeed) {
+			this.timeInNsBothPressed = 0;
+			this.repeatDelay = repeatDelay;
+			this.repeatSpeed = repeatSpeed;
 			this.i = i;
 			this.key1Pressed = 0;
 			this.key1 = key1;
@@ -70,19 +76,21 @@ class Movement {
 		Transform transform = new Transform(position);
 		Quaternion quarternion = transform.GetLookAtRotation(lookAtPoint, up);
 		this.m_transform = transform.Rotate(quarternion);
-		m_keys[X_TRANS_PLUS] = new KeyInfo(X_TRANS_PLUS, xPlusKey, translateKey);
-		m_keys[Y_TRANS_PLUS] = new KeyInfo(Y_TRANS_PLUS, yPlusKey, translateKey);
-		m_keys[Z_TRANS_PLUS] = new KeyInfo(Z_TRANS_PLUS, zPlusKey, translateKey);
-		m_keys[X_TRANS_NEG ] = new KeyInfo(X_TRANS_NEG, xNegKey,  translateKey);
-		m_keys[Y_TRANS_NEG ] = new KeyInfo(Y_TRANS_NEG, yNegKey,  translateKey);
-		m_keys[Z_TRANS_NEG ] = new KeyInfo(Z_TRANS_NEG, zNegKey,  translateKey);
+		long repeatDelay = 350 * 1000000;
+		long repeatSpeed = 100 * 1000000;
+		m_keys[X_TRANS_PLUS] = new KeyInfo(X_TRANS_PLUS, xPlusKey, translateKey, repeatDelay, repeatSpeed);
+		m_keys[Y_TRANS_PLUS] = new KeyInfo(Y_TRANS_PLUS, yPlusKey, translateKey, repeatDelay, repeatSpeed);
+		m_keys[Z_TRANS_PLUS] = new KeyInfo(Z_TRANS_PLUS, zPlusKey, translateKey, repeatDelay, repeatSpeed);
+		m_keys[X_TRANS_NEG ] = new KeyInfo(X_TRANS_NEG, xNegKey,  translateKey, repeatDelay, repeatSpeed);
+		m_keys[Y_TRANS_NEG ] = new KeyInfo(Y_TRANS_NEG, yNegKey,  translateKey, repeatDelay, repeatSpeed);
+		m_keys[Z_TRANS_NEG ] = new KeyInfo(Z_TRANS_NEG, zNegKey,  translateKey, repeatDelay, repeatSpeed);
 
-		m_keys[X_ROTATE_PLUS] = new KeyInfo(X_ROTATE_PLUS, xPlusKey, rotationKey);
-		m_keys[Y_ROTATE_PLUS] = new KeyInfo(Y_ROTATE_PLUS, yPlusKey, rotationKey);
-		m_keys[Z_ROTATE_PLUS] = new KeyInfo(Z_ROTATE_PLUS, zPlusKey, rotationKey);
-		m_keys[X_ROTATE_NEG ] = new KeyInfo(X_ROTATE_NEG, xNegKey,  rotationKey);
-		m_keys[Y_ROTATE_NEG ] = new KeyInfo(Y_ROTATE_NEG, yNegKey,  rotationKey);
-		m_keys[Z_ROTATE_NEG ] = new KeyInfo(Z_ROTATE_NEG, zNegKey,  rotationKey);
+		m_keys[X_ROTATE_PLUS] = new KeyInfo(X_ROTATE_PLUS, xPlusKey, rotationKey, repeatDelay, repeatSpeed);
+		m_keys[Y_ROTATE_PLUS] = new KeyInfo(Y_ROTATE_PLUS, yPlusKey, rotationKey, repeatDelay, repeatSpeed);
+		m_keys[Z_ROTATE_PLUS] = new KeyInfo(Z_ROTATE_PLUS, zPlusKey, rotationKey, repeatDelay, repeatSpeed);
+		m_keys[X_ROTATE_NEG ] = new KeyInfo(X_ROTATE_NEG, xNegKey,  rotationKey, repeatDelay, repeatSpeed);
+		m_keys[Y_ROTATE_NEG ] = new KeyInfo(Y_ROTATE_NEG, yNegKey,  rotationKey, repeatDelay, repeatSpeed);
+		m_keys[Z_ROTATE_NEG ] = new KeyInfo(Z_ROTATE_NEG, zNegKey,  rotationKey, repeatDelay, repeatSpeed);
 		m_h = -1;
 	}
 
@@ -106,6 +114,11 @@ class Movement {
 			if(ki.key2Pressed < cnt) {
 				ki.key2Pressed = cnt;
 				if(DBG) Dbg.p(String.format("i=%d: key2=%d:%d pressed\n", i, ki.key2, ki.key2Pressed));
+			}
+
+			// Mark time when both are first pressed.
+			if((ki.key1Pressed > 0) && (ki.key2Pressed >0) && (ki.timeInNsBothPressed == 0)) {
+				ki.timeInNsBothPressed = timeInNs;
 			}
 
 			if(this.KeysReleased(input, ki) || ((ki.key1Pressed > 1) && (ki.key2Pressed >= 1))) {
@@ -184,10 +197,12 @@ class Movement {
 			if((ki.key1Pressed > 0) && !input.GetKey(ki.key1)) {
 				if(DBG) Dbg.p(String.format("i=%d: key1=%d released\n", i, ki.key1));
 				ki.key1Pressed = 0;
+				ki.timeInNsBothPressed = 0;
 			}
 			if((ki.key2Pressed > 0) && !input.GetKey(ki.key2)) {
 				if(DBG) Dbg.p(String.format("i=%d: key2=%d released\n", i, ki.key2));
 				ki.key2Pressed = 0;
+				ki.timeInNsBothPressed = 0;
 			}
 		}
 	}
