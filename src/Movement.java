@@ -32,7 +32,7 @@ class Movement {
 	private KeyInfo m_keys[] = new KeyInfo[12];
 	private boolean m_changed;
 	private Transform m_transform;
-	private float m_h;
+	private float m_cw;
 
 	private final int X_TRANS_PLUS = 0;
 	private final int Y_TRANS_PLUS = 1;
@@ -71,7 +71,7 @@ class Movement {
 	//    (zPlusKey)   -y
 	//                 (yNegKey)
 	//
-	public Movement(Vector4f position, Vector4f lookAtPoint, Vector4f up,
+	public Movement(Vector4f position, Vector4f lookAtPoint, Vector4f up, boolean clockwise,
 			int xPlusKey, int yPlusKey, int zPlusKey,
 			int xNegKey,  int yNegKey,  int zNegKey,
 			int translateKey, int rotationKey)
@@ -95,8 +95,11 @@ class Movement {
 		m_keys[Y_ROTATE_NEG ] = new KeyInfo(Y_ROTATE_NEG, yNegKey,  rotationKey, repeatDelay, repeatSpeed);
 		m_keys[Z_ROTATE_NEG ] = new KeyInfo(Z_ROTATE_NEG, zNegKey,  rotationKey, repeatDelay, repeatSpeed);
 
-		// Change m_h to -1 to get counter-clockwise rotation, i.e. "left-handed" rotation.
-		m_h = 1;
+		if(clockwise) {
+			m_cw = 1;
+		} else {
+			m_cw = -1;
+		}
 	}
 
 	private boolean KeysReleased(Input input, KeyInfo ki) {
@@ -166,32 +169,32 @@ class Movement {
 					}
 					case X_ROTATE_PLUS: {
 						if(DBG) Dbg.p(String.format("i=%d rotate x+\n", i));
-						Rotate(m_transform.GetRot().GetXaxis(), m_h * rotationDelta);
+						Rotate(m_transform.GetRot().GetXaxis(), m_cw * rotationDelta);
 						break;
 					}
 					case Y_ROTATE_PLUS: {
 						if(DBG) Dbg.p(String.format("i=%d rotate y+\n", i));
-						Rotate(m_transform.GetRot().GetYaxis(), m_h * rotationDelta);
+						Rotate(m_transform.GetRot().GetYaxis(), m_cw * rotationDelta);
 						break;
 					}
 					case Z_ROTATE_PLUS: {
 						if(DBG) Dbg.p(String.format("i=%d rotate z+\n", i));
-						Rotate(m_transform.GetRot().GetZaxis(), m_h * rotationDelta);
+						Rotate(m_transform.GetRot().GetZaxis(), m_cw * rotationDelta);
 						break;
 					}
 					case X_ROTATE_NEG: {
 						if(DBG) Dbg.p(String.format("i=%d rotate x-\n", i));
-						Rotate(m_transform.GetRot().GetXaxis(), m_h * -rotationDelta);
+						Rotate(m_transform.GetRot().GetXaxis(), m_cw * -rotationDelta);
 						break;
 					}
 					case Y_ROTATE_NEG: {
 						if(DBG) Dbg.p(String.format("i=%d rotate y-\n", i));
-						Rotate(m_transform.GetRot().GetYaxis(), m_h * -rotationDelta);
+						Rotate(m_transform.GetRot().GetYaxis(), m_cw * -rotationDelta);
 						break;
 					}
 					case Z_ROTATE_NEG: {
 						if(DBG) Dbg.p(String.format("i=%d rotate z-\n", i));
-						Rotate(m_transform.GetRot().GetZaxis(), m_h * -rotationDelta);
+						Rotate(m_transform.GetRot().GetZaxis(), m_cw * -rotationDelta);
 						break;
 					}
 				}
@@ -227,10 +230,20 @@ class Movement {
 
 	public void Rotate(Vector4f axis, float angle)
 	{
-		m_transform = m_transform.Rotate(new Quaternion(axis, angle));
+		m_transform = RotateCW(axis, angle);
 	}
 
-	boolean m_changed()
+	public Transform RotateCW(Vector4f axis, float angle)
+	{
+		return m_transform.Rotate(new Quaternion(axis, angle));
+	}
+
+	public Transform RotateCCW(Vector4f axis, float angle)
+	{
+		return RotateCW(axis, -angle);
+	}
+
+	boolean Changed()
 	{
 		return this.m_changed;
 	}

@@ -28,9 +28,9 @@ public class Entity
 	//          (n)    -y
 	//                 (j)
 	// 
-	public Entity(Mesh mesh, Vector4f position, Vector4f lookAtPoint, Vector4f up)
+	public Entity(Mesh mesh, Vector4f position, Vector4f lookAtPoint, Vector4f up, boolean clockwise)
 	{
-		this(mesh, position, lookAtPoint, up,
+		this(mesh, position, lookAtPoint, up, clockwise,
 			KeyEvent.VK_L, KeyEvent.VK_K, KeyEvent.VK_U,
 			KeyEvent.VK_H, KeyEvent.VK_J, KeyEvent.VK_N,
 			KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL);
@@ -59,7 +59,7 @@ public class Entity
 	//     (zNegKey)   -y
 	//                 (yNegKey)
 	// 
-	public Entity(Mesh mesh, Vector4f position, Vector4f lookAtPoint, Vector4f up,
+	public Entity(Mesh mesh, Vector4f position, Vector4f lookAtPoint, Vector4f up, boolean clockwise,
 			int xPlusKey, int yPlusKey, int zPlusKey,
 			int xNegKey,  int yNegKey,  int zNegKey,
 			int translateKey, int rotateKey)
@@ -68,7 +68,7 @@ public class Entity
 		Dbg.p(String.format("x-=%d y-=%d z-=%d\n", xNegKey, yNegKey, zNegKey));
 		Dbg.p(String.format("tr=%d ro=%d\n", translateKey, rotateKey));
 		m_mesh = mesh;
-		m_movement = new Movement(position, lookAtPoint, up,
+		m_movement = new Movement(position, lookAtPoint, up, clockwise,
 			xPlusKey, yPlusKey, zPlusKey,
 			xNegKey, yNegKey, zNegKey,
 			translateKey, rotateKey);

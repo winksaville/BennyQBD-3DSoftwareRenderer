@@ -41,6 +41,8 @@ public class Main
 {
 	static boolean DBG = true;
 
+	static final boolean CLOCKWISE = true;
+
 	// Lazy exception handling here. You can do something more interesting 
 	// depending on what you're doing
 	public static void main(String[] args) throws IOException
@@ -61,7 +63,8 @@ public class Main
 		Vector4f monkeyLocationPoint = new Vector4f(0, 0, 0);
 		Vector4f monkeyLookAtPoint = new Vector4f(0, 0, 1);
 		Vector4f monkeyUpAxis = new Vector4f(0, 1, 0);
-		Entity monkeyEntity = new Entity(monkeyMesh, monkeyLocationPoint, monkeyLookAtPoint, monkeyUpAxis);
+		boolean monkeyClockwise = CLOCKWISE;
+		Entity monkeyEntity = new Entity(monkeyMesh, monkeyLocationPoint, monkeyLookAtPoint, monkeyUpAxis, monkeyClockwise);
 
 		Mesh terrainMesh = new Mesh("./res/terrain2.obj");
 		Transform terrainTransform = new Transform(new Vector4f(0, -1, 0));
@@ -71,7 +74,8 @@ public class Main
 				(float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f);
 		Vector4f cameraPosition = new Vector4f(0, 0, -3);
 		Vector4f cameraLookAt = new Vector4f(0, 0, 0);
-		Camera camera = new Camera(cameraViewPerspective, cameraPosition, cameraLookAt);
+		boolean cameraClockwise = CLOCKWISE;
+		Camera camera = new Camera(cameraViewPerspective, cameraPosition, cameraLookAt, cameraClockwise);
 		if (DBG) {
 			Dbg.prtV4f("cameraPosition:", cameraPosition); Dbg.p("\n");
 			Dbg.prtV4f("cameraLookAt:", cameraLookAt); Dbg.p("\n");

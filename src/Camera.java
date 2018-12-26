@@ -16,19 +16,19 @@ public class Camera
 	{
 		Vector4f position = new Vector4f(0, 0, 0);
 		Vector4f lookAtPoint = new Vector4f(0, 0, 1);
-		this.Init(projection, position, lookAtPoint);
+		this.Init(projection, position, lookAtPoint, true);
 	}
 
-	public Camera(Matrix4f projection, Vector4f position, Vector4f lookAtPoint)
+	public Camera(Matrix4f projection, Vector4f position, Vector4f lookAtPoint, boolean clockwise)
 	{
-		this.Init(projection, position, lookAtPoint);
+		this.Init(projection, position, lookAtPoint, clockwise);
 	}
 
-	public void Init(Matrix4f projection, Vector4f position, Vector4f lookAtPoint)
+	public void Init(Matrix4f projection, Vector4f position, Vector4f lookAtPoint, boolean clockwise)
 	{
 		this.m_projection = projection;
 		Vector4f upAxis = new Vector4f(0, 1, 0);
-		this.m_movement = new Movement(position, lookAtPoint, upAxis,
+		this.m_movement = new Movement(position, lookAtPoint, upAxis, clockwise,
 			KeyEvent.VK_L, KeyEvent.VK_K, KeyEvent.VK_U,
 			KeyEvent.VK_H, KeyEvent.VK_J, KeyEvent.VK_N,
 			KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL);
@@ -49,12 +49,12 @@ public class Camera
 		m_movement.Update(input, timeInNs, delta * 2, delta * 2);
 	}
 
-	private void Translate(Vector4f dir, float amt)
+	public void Translate(Vector4f dir, float amt)
 	{
 		m_movement.Translate(dir, amt);
 	}
 
-	private void Rotate(Vector4f axis, float angle)
+	public void Rotate(Vector4f axis, float angle)
 	{
 		m_movement.Rotate(axis, angle);
 	}
