@@ -94,7 +94,9 @@ class Movement {
 		m_keys[X_ROTATE_NEG ] = new KeyInfo(X_ROTATE_NEG, xNegKey,  rotationKey, repeatDelay, repeatSpeed);
 		m_keys[Y_ROTATE_NEG ] = new KeyInfo(Y_ROTATE_NEG, yNegKey,  rotationKey, repeatDelay, repeatSpeed);
 		m_keys[Z_ROTATE_NEG ] = new KeyInfo(Z_ROTATE_NEG, zNegKey,  rotationKey, repeatDelay, repeatSpeed);
-		m_h = -1;
+
+		// Change m_h to -1 to get counter-clockwise rotation, i.e. "left-handed" rotation.
+		m_h = 1;
 	}
 
 	private boolean KeysReleased(Input input, KeyInfo ki) {
