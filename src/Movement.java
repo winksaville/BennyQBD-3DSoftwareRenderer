@@ -2,22 +2,20 @@ import java.awt.event.KeyEvent;
 
 class Movement {
 
-	final boolean DBG = false;
-
-	private Vector4f X_AXIS = new Vector4f(1, 0, 0);
-	private Vector4f Y_AXIS = new Vector4f(0, 1, 0);
-	private Vector4f Z_AXIS = new Vector4f(0, 0, 1);
+	final boolean DBG = true;
 
 	private class KeyInfo {
-		boolean key1Pressed;
+		int i;
+		int key1Pressed;
 		int key1;
-		boolean key2Pressed;
+		int key2Pressed;
 		int key2;
 
-		KeyInfo(int key1, int key2) {
-			this.key1Pressed = false;
+		KeyInfo(int i, int key1, int key2) {
+			this.i = i;
+			this.key1Pressed = 0;
 			this.key1 = key1;
-			this.key2Pressed = false;
+			this.key2Pressed = 0;
 			this.key2 = key2;
 		}
 	};
@@ -25,6 +23,7 @@ class Movement {
 	private KeyInfo m_keys[] = new KeyInfo[12];
 	private boolean m_changed;
 	private Transform m_transform;
+	private float m_h;
 
 	private final int X_TRANS_PLUS = 0;
 	private final int Y_TRANS_PLUS = 1;
@@ -71,19 +70,26 @@ class Movement {
 		Transform transform = new Transform(position);
 		Quaternion quarternion = transform.GetLookAtRotation(lookAtPoint, up);
 		this.m_transform = transform.Rotate(quarternion);
-		m_keys[X_TRANS_PLUS] = new KeyInfo(xPlusKey, translateKey);
-		m_keys[Y_TRANS_PLUS] = new KeyInfo(yPlusKey, translateKey);
-		m_keys[Z_TRANS_PLUS] = new KeyInfo(zPlusKey, translateKey);
-		m_keys[X_TRANS_NEG ] = new KeyInfo(xNegKey,  translateKey);
-		m_keys[Y_TRANS_NEG ] = new KeyInfo(yNegKey,  translateKey);
-		m_keys[Z_TRANS_NEG ] = new KeyInfo(zNegKey,  translateKey);
+		m_keys[X_TRANS_PLUS] = new KeyInfo(X_TRANS_PLUS, xPlusKey, translateKey);
+		m_keys[Y_TRANS_PLUS] = new KeyInfo(Y_TRANS_PLUS, yPlusKey, translateKey);
+		m_keys[Z_TRANS_PLUS] = new KeyInfo(Z_TRANS_PLUS, zPlusKey, translateKey);
+		m_keys[X_TRANS_NEG ] = new KeyInfo(X_TRANS_NEG, xNegKey,  translateKey);
+		m_keys[Y_TRANS_NEG ] = new KeyInfo(Y_TRANS_NEG, yNegKey,  translateKey);
+		m_keys[Z_TRANS_NEG ] = new KeyInfo(Z_TRANS_NEG, zNegKey,  translateKey);
 
-		m_keys[X_ROTATE_PLUS] = new KeyInfo(xPlusKey, rotationKey);
-		m_keys[Y_ROTATE_PLUS] = new KeyInfo(yPlusKey, rotationKey);
-		m_keys[Z_ROTATE_PLUS] = new KeyInfo(zPlusKey, rotationKey);
-		m_keys[X_ROTATE_NEG ] = new KeyInfo(xNegKey,  rotationKey);
-		m_keys[Y_ROTATE_NEG ] = new KeyInfo(yNegKey,  rotationKey);
-		m_keys[Z_ROTATE_NEG ] = new KeyInfo(zNegKey,  rotationKey);
+		m_keys[X_ROTATE_PLUS] = new KeyInfo(X_ROTATE_PLUS, xPlusKey, rotationKey);
+		m_keys[Y_ROTATE_PLUS] = new KeyInfo(Y_ROTATE_PLUS, yPlusKey, rotationKey);
+		m_keys[Z_ROTATE_PLUS] = new KeyInfo(Z_ROTATE_PLUS, zPlusKey, rotationKey);
+		m_keys[X_ROTATE_NEG ] = new KeyInfo(X_ROTATE_NEG, xNegKey,  rotationKey);
+		m_keys[Y_ROTATE_NEG ] = new KeyInfo(Y_ROTATE_NEG, yNegKey,  rotationKey);
+		m_keys[Z_ROTATE_NEG ] = new KeyInfo(Z_ROTATE_NEG, zNegKey,  rotationKey);
+		m_h = -1;
+	}
+
+	private boolean KeysReleased(Input input, KeyInfo ki) {
+		boolean released = (ki.key1Pressed > 0) && (ki.key2Pressed > 0) && (!input.GetKey(ki.key1) || !input.GetKey(ki.key2));
+		if(DBG && released) Dbg.p(String.format("\ni=%d key1=%d KeysReleased ^^^\n", ki.i, ki.key1));
+		return released;
 	}
 
 	public void Update(Input input, float translationDelta, float rotationDelta)
@@ -91,9 +97,26 @@ class Movement {
 		for (int i = 0; i < m_keys.length; i++) {
 			KeyInfo ki = m_keys[i];
 
-			if(ki.key1Pressed && ki.key2Pressed && (!input.GetKey(ki.key1) || !input.GetKey(ki.key2))) {
-				Dbg.p(String.format("i=%d key1=%d key2=%d pressed\n", i, ki.key1, ki.key2));
+			int cnt = input.GetKeyCnt(ki.key1);
+			if(ki.key1Pressed < cnt) {
+				ki.key1Pressed = cnt;
+				if(DBG) Dbg.p(String.format("i=%d: key1=%d:%d pressed\n", i, ki.key1, ki.key1Pressed));
+			}
+			cnt = input.GetKeyCnt(ki.key2);
+			if(ki.key2Pressed < cnt) {
+				ki.key2Pressed = cnt;
+				if(DBG) Dbg.p(String.format("i=%d: key2=%d:%d pressed\n", i, ki.key2, ki.key2Pressed));
+			}
+
+			if(this.KeysReleased(input, ki) || ((ki.key1Pressed > 1) && (ki.key2Pressed >= 1))) {
 				this.m_changed = true;
+				cnt = ki.key1Pressed;
+				if (cnt > 1) cnt--;
+				translationDelta = translationDelta * cnt;
+				rotationDelta = rotationDelta * cnt;
+				Dbg.p(String.format("i=%d key1=%d:%d key2=%d:%d pressed\n", i, ki.key1, ki.key1Pressed, ki.key2, ki.key2Pressed));
+				ki.key1Pressed = input.KeyNormalize(ki.key1);
+				ki.key2Pressed = input.KeyNormalize(ki.key2);
 				switch (i) {
 					case X_TRANS_PLUS: {
 						if(DBG) Dbg.p("trans x+\n");
@@ -127,53 +150,44 @@ class Movement {
 					}
 					case X_ROTATE_PLUS: {
 						if(DBG) Dbg.p("rotate x+\n");
-						Rotate(m_transform.GetRot().GetXaxis(), rotationDelta);
+						Rotate(m_transform.GetRot().GetXaxis(), m_h * rotationDelta);
 						break;
 					}
 					case Y_ROTATE_PLUS: {
 						if(DBG) Dbg.p("rotate y+\n");
-						Rotate(m_transform.GetRot().GetYaxis(), rotationDelta);
+						Rotate(m_transform.GetRot().GetYaxis(), m_h * rotationDelta);
 						break;
 					}
 					case Z_ROTATE_PLUS: {
 						if(DBG) Dbg.p("rotate z+\n");
-						Rotate(m_transform.GetRot().GetZaxis(), rotationDelta);
+						Rotate(m_transform.GetRot().GetZaxis(), m_h * rotationDelta);
 						break;
 					}
 					case X_ROTATE_NEG: {
 						if(DBG) Dbg.p("rotate x-\n");
-						Rotate(m_transform.GetRot().GetXaxis(), -rotationDelta);
+						Rotate(m_transform.GetRot().GetXaxis(), m_h * -rotationDelta);
 						break;
 					}
 					case Y_ROTATE_NEG: {
 						if(DBG) Dbg.p("rotate y-\n");
-						Rotate(m_transform.GetRot().GetYaxis(), -rotationDelta);
+						Rotate(m_transform.GetRot().GetYaxis(), m_h * -rotationDelta);
 						break;
 					}
 					case Z_ROTATE_NEG: {
 						if(DBG) Dbg.p("rotate z-\n");
-						Rotate(m_transform.GetRot().GetZaxis(), -rotationDelta);
+						Rotate(m_transform.GetRot().GetZaxis(), m_h * -rotationDelta);
 						break;
 					}
 				}
 			}
 
-			if(!ki.key1Pressed && input.GetKey(ki.key1)) {
-				if(DBG) Dbg.p(String.format("key1=%d pressed\n", ki.key1));
-				ki.key1Pressed = true;
+			if((ki.key1Pressed > 0) && !input.GetKey(ki.key1)) {
+				if(DBG) Dbg.p(String.format("i=%d: key1=%d released\n", i, ki.key1));
+				ki.key1Pressed = 0;
 			}
-			if(!ki.key2Pressed && input.GetKey(ki.key2)) {
-				if(DBG) Dbg.p(String.format("key2=%d pressed\n", ki.key2));
-				ki.key2Pressed = true;
-			}
-
-			if(ki.key1Pressed && !input.GetKey(ki.key1)) {
-				if(DBG) Dbg.p(String.format("key1=%d released\n", ki.key1));
-				ki.key1Pressed = false;
-			}
-			if(ki.key2Pressed && !input.GetKey(ki.key2)) {
-				if(DBG) Dbg.p(String.format("key2=%d released\n", ki.key2));
-				ki.key2Pressed = false;
+			if((ki.key2Pressed > 0) && !input.GetKey(ki.key2)) {
+				if(DBG) Dbg.p(String.format("i=%d: key2=%d released\n", i, ki.key2));
+				ki.key2Pressed = 0;
 			}
 		}
 	}

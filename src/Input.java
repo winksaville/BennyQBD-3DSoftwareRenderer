@@ -39,7 +39,7 @@ import java.awt.event.MouseMotionListener;
 public class Input implements KeyListener, FocusListener,
 		MouseListener, MouseMotionListener {
 	private class KeyInfo {
-		boolean pressed = false;
+		int pressed = 0;
 		boolean left = false;
 		boolean right = false;
 	};
@@ -99,7 +99,7 @@ public class Input implements KeyListener, FocusListener,
 	/** Updates state when the window loses focus */
 	public void focusLost(FocusEvent e) {
 		for (int i = 0; i < keys.length; i++) {
-			keys[i].pressed = false;
+			keys[i].pressed = 0;
 			keys[i].left = false;
 			keys[i].right = false;
 		}
@@ -118,8 +118,8 @@ public class Input implements KeyListener, FocusListener,
 			if (e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) {
 				keys[code].right = true;
 			}
-			keys[code].pressed = true;
-			//System.out.printf("KeyPressed=%d left=%b right=%b\n", code, keys[code].left, keys[code].right);
+			keys[code].pressed = keys[code].pressed + 1;
+			System.out.printf("KeyPressed=%d:%d left=%b right=%b\n", code, keys[code].pressed, keys[code].left, keys[code].right);
 		}
 	}
 
@@ -136,7 +136,7 @@ public class Input implements KeyListener, FocusListener,
 				System.out.printf("KeyReleased=%d right Released\n", code);
 			}
 			if (!keys[code].left && !keys[code].right) {
-				keys[code].pressed = false;
+				keys[code].pressed = 0;
 				System.out.printf("KeyReleased=%d NO L/R\n", code);
 			}
 		}
@@ -147,13 +147,38 @@ public class Input implements KeyListener, FocusListener,
 	}
 
 	/**
+	 * Gets number of times key was pressed
+	 *
+	 * @param key The key to test
+	 * @return Number of times pressed
+	 */
+	public int GetKeyCnt(int key) {
+		return keys[key].pressed;
+	}
+
+	/**
+	 * Normalize key cnt to 0 or 1
+	 *
+	 * @param key The key to test
+	 * @return Normalized value 0 or 1
+	 */
+	public int KeyNormalize(int key) {
+		if (keys[key].pressed >= 1) {
+			keys[key].pressed = 1;
+		} else {
+			keys[key].pressed = 0;
+		}
+		return keys[key].pressed;
+	}
+
+	/**
 	 * Gets whether or not a particular key is currently pressed.
 	 * 
 	 * @param key The key to test
 	 * @return Whether or not key is currently pressed.
 	 */
 	public boolean GetKey(int key) {
-		return keys[key].pressed;
+		return GetKeyCnt(key) > 0;
 	}
 
 	/**
