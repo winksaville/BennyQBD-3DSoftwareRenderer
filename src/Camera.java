@@ -42,6 +42,27 @@ public class Camera
 		Matrix4f cameraTranslation = new Matrix4f().InitTranslation(cameraPos.GetX(), cameraPos.GetY(), cameraPos.GetZ());
 
 		return m_projection.Mul(cameraRotation.Mul(cameraTranslation));
+
+		// Neither of these work the correctly, they flip the z-axis but
+		// other things too :(
+
+		// From: https://docs.microsoft.com/en-us/windows/uwp/graphics-concepts/coordinate-systems
+		// I didn't "flip order of triangle vertices" as they seem OK but maybe not.
+		// Scale "world space by -1 in the z-direction"
+		//Matrix4f view = m_projection.Mul(cameraRotation.Mul(cameraTranslation));
+		//view.Set(2, 0, -view.Get(2, 0));
+		//view.Set(2, 1, -view.Get(2, 1));
+		//view.Set(2, 2, -view.Get(2, 2));
+		//view.Set(2, 3, -view.Get(2, 3));
+		//return view;
+
+		// From: http://www.techart3d.com/2016/02/convert-left-handed-to-right-handed-coordinates/
+		//Matrix4f view = m_projection.Mul(cameraRotation.Mul(cameraTranslation));
+		////Matrix4f identityMinusZ = new Matrix4f();
+		//return  identityMinusZ.Mul(view.Mul(identityMinusZ));
+		//return  view.Mul(identityMinusZ.Mul(view));
+		//return  view.Mul(identityMinusZ);
+		//return  identityMinusZ.Mul(view);
 	}
 
 	public void Update(Input input, long timeInNs, float delta)
